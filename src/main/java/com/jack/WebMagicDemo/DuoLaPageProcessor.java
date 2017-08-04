@@ -3,6 +3,7 @@ package com.jack.WebMagicDemo;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.monitor.SpiderMonitor;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.scheduler.BloomFilterDuplicateRemover;
 import us.codecraft.webmagic.scheduler.QueueScheduler;
@@ -52,12 +53,16 @@ public class DuoLaPageProcessor implements PageProcessor {
 	}
 
 	public static void main(String[] args) {
-		int pn=10000;
+		int pn=18400;
 		while (true) {
-			String url="https://tieba.baidu.com/f?kw=机器猫&ie=utf-8&pn="+pn;
-			Spider spider=Spider.create(new DuoLaPageProcessor()).addUrl(url).addPipeline(new TestPipeline());
-			spider.setScheduler(new QueueScheduler().setDuplicateRemover(new BloomFilterDuplicateRemover(10000000))).thread(5).run();
-			pn+=50;
+			try {
+				String url="https://tieba.baidu.com/f?kw=机器猫&ie=utf-8&pn="+pn;
+				Spider spider=Spider.create(new DuoLaPageProcessor()).addUrl(url).addPipeline(new TestPipeline());
+				spider.setScheduler(new QueueScheduler().setDuplicateRemover(new BloomFilterDuplicateRemover(10000000))).thread(5).run();
+				pn+=50;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		/*Pattern patter = Pattern.compile("/p/\\d+\\?lp=\\d+\\&amp;mo_device=1\\&amp;is_jingpost=[01]");
 		Matcher m=patter.matcher("/p/5238031821?lp=5027&amp;mo_device=1&amp;is_jingpost=0");
