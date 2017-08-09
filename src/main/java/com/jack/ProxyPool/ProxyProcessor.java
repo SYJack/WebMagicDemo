@@ -5,6 +5,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.Spider;
 
 public class ProxyProcessor extends AbstractProcessor {
 	private static volatile ProxyProcessor instance;
@@ -15,15 +16,21 @@ public class ProxyProcessor extends AbstractProcessor {
 	public static ProxyProcessor getInstance(String url) {
 		if (instance == null) {
 			synchronized (ProxyProcessor.class) {
-				instance = new ProxyProcessor(url);
+				if (instance == null) {
+					instance = new ProxyProcessor(url);
+				}
 			}
 		}
+		instance.url = url;
 		return instance;
 	}
+
 	public static ProxyProcessor getInstance() {
 		if (instance == null) {
 			synchronized (ProxyProcessor.class) {
-				instance = new ProxyProcessor();
+				if (instance == null) {
+					instance = new ProxyProcessor();
+				}
 			}
 		}
 		return instance;
@@ -32,31 +39,34 @@ public class ProxyProcessor extends AbstractProcessor {
 	public ProxyProcessor() {
 		initThread();
 	}
+
 	public ProxyProcessor(String url) {
 		this.url = url;
 		initThread();
 	}
 
-	public void startDownLoadProxy( final Page page) {
+	@Override
+	public void process(Page page) {
+		startDownLoadProxy(page);
+	}
+
+	public void startDownLoadProxy(final Page page) {
+		proxyDownloadThreadExecutor.execute(new ProxyDownTask(url, page));
+	}
+
+	public static void startDownLoadProxy() {
 		new Thread(new Runnable() {
 			public void run() {
-				while (true) {
-					proxyDownloadThreadExecutor.execute(new ProxyDownTask(url, page));
+				for (String url : ProxyPool.proxyMap.keySet()) {
+					Spider.create(ProxyProcessor.getInstance(url)).addUrl(url).run();
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-
 				}
 			}
 		}).start();
-		// new Thread(new SaveProxyTask()).start();
-	}
-
-	@Override
-	public void process(Page page) {
-		startDownLoadProxy(page);
 	}
 
 	private void initThread() {

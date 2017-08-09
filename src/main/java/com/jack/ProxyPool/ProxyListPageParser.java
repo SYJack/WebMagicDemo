@@ -11,6 +11,6 @@ public interface ProxyListPageParser extends Parser{
 	 */
 	static final boolean anonymousFlag = true;
 
-	List<Proxy> parse(Page page);
+	List<ProxyIp> parse(Page page);
 }
  

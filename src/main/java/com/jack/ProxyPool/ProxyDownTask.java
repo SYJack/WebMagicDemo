@@ -16,9 +16,11 @@ public class ProxyDownTask implements Runnable {
 	}
 	public void run() {
 		ProxyListPageParser parser=ProxyListPageParserFactory.getProxyListPageParser(ProxyPool.proxyMap.get(url));
-		List<Proxy> proxyList = parser.parse(page);
-		for (Proxy proxy : proxyList) {
-			System.out.println(url+"---->"+proxy.getProxyStr());
+		List<ProxyIp> proxyList = parser.parse(page);
+		for (ProxyIp proxy : proxyList) {
+			if(!ProxyPool.proxySet.contains(proxy)){
+				proxyProcessor.getProxyTestThreadExecutor().execute(new ProxyTestTask(proxy));
+			}
 		}
 	}
 
