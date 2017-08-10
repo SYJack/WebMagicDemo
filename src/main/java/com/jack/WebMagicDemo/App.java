@@ -5,7 +5,6 @@ import java.io.RandomAccessFile;
 import com.jack.ProxyPool.BloomFilter;
 import com.jack.ProxyPool.ProxyIp;
 import com.jack.ProxyPool.ProxyPool;
-import com.jack.ProxyPool.ProxyProcessor;
 import com.jack.douban.DouBanProcessor;
 
 /**
@@ -16,7 +15,7 @@ public class App {
 	public static BloomFilter filterIP = new BloomFilter();
 
 	public static void main(String[] args) {
-		ProxyProcessor.startDownLoadProxy();
+		/*ProxyProcessor.startDownLoadProxy();*/
 		/*Spider.create(DouBanProcessor.getInstance()).run();*/
 		DouBanProcessor.getInstance().startCrawl();
 	}

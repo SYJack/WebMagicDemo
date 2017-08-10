@@ -9,17 +9,39 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.io.Reader;
+import java.util.Random;
+import java.util.Scanner;
 
 public class ReadFromFile {
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String fileName = "src/main/resources/proxyip";
+		
 		// readFileByBytes(fileName);
 		// readFileByChars(fileName);
-		 readFileByLines(fileName);
+		// readFileByLines(fileName);
 		//readFileByRandomAccess(fileName);
+		//System.out.println(choose(fileName));
+	}
+
+	public static String RandomReadLine() {
+		String fileName = "src/main/resources/proxyip";
+		File f = new File(fileName);
+		String result = null;
+		Random rand = new Random();
+		try {
+			int n = 0;
+			for (Scanner sc = new Scanner(f); sc.hasNext();) {
+				++n;
+				String line = sc.nextLine();
+				if (rand.nextInt(n) == 0)
+					result = line;
+			}
+			return result;
+		} catch (Exception e) {
+		}
+		return result;
 	}
 
 	/**

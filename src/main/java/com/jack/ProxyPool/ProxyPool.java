@@ -22,7 +22,7 @@ public class ProxyPool {
 	public final static DelayQueue<ProxyIp> proxyQueue = new DelayQueue<ProxyIp>();
 	public final static Map<String, Class<?>> proxyMap = new HashMap<String, Class<?>>();
 	static {
-		int pages = 8;
+		int pages = 10;
 		for (int i = 1; i <= pages; i++) {
 			proxyMap.put("http://www.xicidaili.com/wt/" + i + ".html", XicidailiProxyListPageParser.class);
 			proxyMap.put("http://www.xicidaili.com/nn/" + i + ".html", XicidailiProxyListPageParser.class);

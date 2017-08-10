@@ -28,11 +28,11 @@ public class ProxyTestTask implements Runnable {
 			httpClient.setProxyProvider(SimpleProxyProvider.from(new Proxy(proxyIp.getIp(), proxyIp.getPort())));
 			Page page = httpClient.get("https://www.zhihu.com");
 			long endTime = System.currentTimeMillis();
-			if (page.getHtml() != null && page.getStatusCode() == 200) {
+			if (page.getRawText() != null && page.getStatusCode() == 200) {
 				if (!ProxyPool.proxySet.contains(proxyIp)) {
 					logger.debug(proxyIp.toString() + "----------代理可用--------请求耗时:" + (endTime - startTime) + "ms");
 					ProxyPool.proxySet.add(proxyIp);
-					ProxyPool.proxyQueue.add(proxyIp);
+					/*ProxyPool.proxyQueue.add(proxyIp);*/
 					// 保存数据到文件
 					App.save();
 				}

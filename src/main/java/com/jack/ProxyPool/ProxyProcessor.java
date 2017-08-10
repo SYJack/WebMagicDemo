@@ -70,7 +70,7 @@ public class ProxyProcessor extends AbstractProcessor {
 	}
 
 	private void initThread() {
-		proxyTestThreadExecutor = new ThreadPoolExecutor(100, 100, 0, TimeUnit.MILLISECONDS,
+		proxyTestThreadExecutor = new ThreadPoolExecutor(20, 20, 0, TimeUnit.MILLISECONDS,
 				new LinkedBlockingQueue<Runnable>(10000), new ThreadPoolExecutor.DiscardPolicy());
 		proxyDownloadThreadExecutor = new ThreadPoolExecutor(10, 10, 0, TimeUnit.MILLISECONDS,
 				new LinkedBlockingQueue<Runnable>());
