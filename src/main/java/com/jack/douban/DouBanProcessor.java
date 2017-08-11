@@ -4,10 +4,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class DouBanProcessor {
+import us.codecraft.webmagic.SimpleHttpClient;
+import us.codecraft.webmagic.Site;
+
+public class DouBanProcessor extends AbstractProcessor{
 
 	private ThreadPoolExecutor douBanDownLoadThreadPooExecutor;
 	private volatile static DouBanProcessor instance;
+	private SimpleHttpClient httpClient;
 
 	public static DouBanProcessor getInstance() {
 		if (instance == null) {
@@ -27,6 +31,9 @@ public class DouBanProcessor {
 	private void initThread() {
 		douBanDownLoadThreadPooExecutor = new ThreadPoolExecutor(50, 50, 1L, TimeUnit.SECONDS,
 				new LinkedBlockingQueue<Runnable>(2000), new ThreadPoolExecutor.CallerRunsPolicy());
+		httpClient= new SimpleHttpClient(
+				Site.me().setTimeOut(10000).setRetryTimes(3).setSleepTime(5000).setUserAgent(
+						"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.109 Safari/537.36"));
 	}
 
 	public void startCrawl() {
@@ -45,4 +52,9 @@ public class DouBanProcessor {
 	public ThreadPoolExecutor getDouBanDownLoadThreadPooExecutor() {
 		return douBanDownLoadThreadPooExecutor;
 	}
+
+	public SimpleHttpClient getHttpClient() {
+		return httpClient;
+	}
+	
 }
