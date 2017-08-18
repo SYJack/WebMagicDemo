@@ -16,7 +16,7 @@ public class MovieSubjects {
 	private String language;
 	private String releaseData;
 	private String runTime;
-	private String ratingNum;
+	private Float ratingNum;
 	private String tags;
 	private String type;
 	private String url;
@@ -30,7 +30,7 @@ public class MovieSubjects {
 
 
 	public MovieSubjects(int movieId, int doubanMovieId,String name, String director, String actors, String country, String language,
-			String releaseData, String runTime, String ratingNum, String tags, String type, String url, String urlMd5) {
+			String releaseData, String runTime, Float ratingNum, String tags, String type, String url, String urlMd5) {
 		this.movieId = movieId;
 		this.doubanMovieId=doubanMovieId;
 		this.name = name;
@@ -154,15 +154,13 @@ public class MovieSubjects {
 		this.runTime = runTime;
 	}
 
-
-
-	public String getRatingNum() {
+	public Float getRatingNum() {
 		return ratingNum;
 	}
 
 
 
-	public void setRatingNum(String ratingNum) {
+	public void setRatingNum(Float ratingNum) {
 		this.ratingNum = ratingNum;
 	}
 

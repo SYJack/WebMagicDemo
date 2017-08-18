@@ -36,8 +36,8 @@ public class SimulationLoginTest {
 	public static void loginDouban() {
 		String redir = "https://movie.douban.com/"; // 输入你登录成功后要跳转的网页
 		String login_src = "https://accounts.douban.com/login";
-		String form_email = ""; // 你的用户名
-		String form_password = ""; // 你的密码
+		String form_email = "1101939669@qq.com"; // 你的用户名
+		String form_password = "DOUBAN167349951AZG"; // 你的密码
 		String captcha_id = getImgID();
 		String login = "登录";
 		String captcha_solution = "";

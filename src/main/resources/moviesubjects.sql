@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50634
 File Encoding         : 65001
 
-Date: 2017-08-11 18:05:59
+Date: 2017-08-18 18:42:19
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -27,7 +27,7 @@ CREATE TABLE `moviesubjects` (
   `actors` text,
   `country` text,
   `language` text,
-  `runTime` text,
+  `runTime` float DEFAULT NULL,
   `ratingNum` text,
   `tags` text,
   `type` text,
@@ -35,4 +35,4 @@ CREATE TABLE `moviesubjects` (
   `urlMd5` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`movieId`),
   UNIQUE KEY `un_ix_url_md5` (`urlMd5`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

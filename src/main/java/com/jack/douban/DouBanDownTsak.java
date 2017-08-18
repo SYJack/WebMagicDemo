@@ -2,6 +2,7 @@ package com.jack.douban;
 
 import java.util.List;
 
+import com.jack.douban.model.MovieSubjects;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
@@ -73,18 +74,32 @@ public class DouBanDownTsak implements Runnable {
 		}
 	}
 	public static void parseMovieInfo(Page page){
-		String name_css="div.content h1 span:eq(0)";
-		String director_css="div.info span#attrs:eq(0)";
-		/*List<Selectable> nodes=page.getHtml().$("div#info>span").nodes();
-		for (Selectable selectable : nodes) {
-			System.out.println(selectable.toString());
-		}*/
+		MovieSubjects movieSubjects=new MovieSubjects();
+		String title=page.getHtml().$("h1 span[property=v:itemreviewed]","text").toString();
+		movieSubjects.setName(title);
 		Selectable selectable=page.getHtml().xpath("//div[@id='info']");
+		List<String> director=selectable.$("span:eq(0)").$("a[rel=v:directedBy]","text").all();
+		List<String> actor=selectable.$("span.actor").$("span.attrs a","text").all();
+		List<String> type=selectable.$("span[property=v:genre]","text").all();
 		String runTime=selectable.$("span[property=v:runtime]","text").toString();
-		String genre=selectable.$("span[property=v:genre]","text").toString();
-		String actor=selectable.$("span.actor").toString();
-		System.out.println(actor);
-		/*List<Selectable> nodes=page.getHtml().xpath("//div[@id='info']").nodes();*/
-	
+		movieSubjects.setRunTime(runTime);
+		String language=selectable.regex(".语言:</span>.+[\\u4e00-\\u9fa5]+.+[\\u4e00-\\u9fa5]+\\s+<br>").toString().split("</span>")[1].split("<br>")[0].trim();
+		movieSubjects.setLanguage(language);
+		String country=selectable.regex(".制片国家/地区:</span>.+[\\u4e00-\\u9fa5]+.+[\\u4e00-\\u9fa5]+\\s+<br>").toString().split("</span>")[1].split("<br>")[0].trim();
+		movieSubjects.setCountry(country);
+		List<String> releaseData=selectable.$("span[property=v:initialReleaseDate]","text").all();
+		String ratingNum=page.getHtml().$("strong[property=v:average]","text").toString();
+		movieSubjects.setRatingNum(Float.valueOf(ratingNum));
+		List<String> tags=page.getHtml().xpath("//div[@class='tags-body']//a/text()").all();
 	}
+	
+	/*private void setUserInfoByJsonPth(MovieSubjects movieSubjects, String fieldName) {
+		try {
+			Field field = movieSubjects.getClass().getDeclaredField(fieldName);
+			field.setAccessible(true);
+			field.set(movieSubjects);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}*/
 }
