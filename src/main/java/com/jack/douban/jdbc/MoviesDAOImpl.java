@@ -8,6 +8,18 @@ import com.mysql.jdbc.PreparedStatement;
 
 
 public class MoviesDAOImpl {
+	
+	private volatile static MoviesDAOImpl moviesDAOImpl = null;
+	public synchronized static MoviesDAOImpl getInstance() {
+		if (moviesDAOImpl == null) {
+			synchronized (MoviesDAOImpl.class) {
+				if (moviesDAOImpl == null) {
+					moviesDAOImpl = new MoviesDAOImpl();
+				}
+			}
+		}
+		return moviesDAOImpl;
+	}
 	private Connection con = DBStatement.getCon();
 	public boolean insert(MovieSubjects subjectsInfo) {
 		String sql = "insert into movieSubjects "

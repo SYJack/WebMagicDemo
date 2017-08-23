@@ -6,13 +6,13 @@ public class Comments {
 	private String movieName;
 	private String commentInfo;
 	private String commentAuthor;
-	private String commentVote;
+	private int commentVote;
 	
 	public Comments() {
 	}
 
 	public Comments(int commentsId, int doubanMovieId, String movieName, String commentInfo, String commentAuthor,
-			String commentVote) {
+			int commentVote) {
 		this.commentsId = commentsId;
 		this.doubanMovieId = doubanMovieId;
 		this.movieName = movieName;
@@ -61,14 +61,11 @@ public class Comments {
 		this.commentAuthor = commentAuthor;
 	}
 
-	public String getCommentVote() {
+	public int getCommentVote() {
 		return commentVote;
 	}
 
-	public void setCommentVote(String commentVote) {
+	public void setCommentVote(int commentVote) {
 		this.commentVote = commentVote;
 	}
-
-	
-
 }

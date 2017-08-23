@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50634
 File Encoding         : 65001
 
-Date: 2017-08-11 18:05:41
+Date: 2017-08-22 18:21:10
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -25,6 +25,6 @@ CREATE TABLE `comments` (
   `movieName` text,
   `commentInfo` longtext,
   `commentAuthor` varchar(100) NOT NULL DEFAULT '',
-  `commentVote` varchar(100) NOT NULL DEFAULT '',
+  `commentVote` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`commentsId`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
