@@ -24,8 +24,8 @@ import us.codecraft.webmagic.selector.Selectable;
 public class DouBanDownTsak implements Runnable {
 	protected DouBanProcessor douBanProcessor;
 	private int start;
-	private static MoviesDAOImpl moviesDAOImpl=MoviesDAOImpl.getInstance();
-	private static CommentsDaoImpl commentsDaoImpl=CommentsDaoImpl.getInstance();
+	private static MoviesDAOImpl moviesDAOImpl = MoviesDAOImpl.getInstance();
+	private static CommentsDaoImpl commentsDaoImpl = CommentsDaoImpl.getInstance();
 
 	public DouBanDownTsak(int start) {
 		this.start = start;
@@ -42,13 +42,15 @@ public class DouBanDownTsak implements Runnable {
 						.from(new Proxy(proxyLine.split(":")[0], Integer.parseInt(proxyLine.split(":")[1]))));
 				Page page = douBanProcessor.getHttpClient().get(url);
 				if (page.getRawText() != null && page.getStatusCode() == 200) {
-					
-					  /*FileOutputStream fs = new FileOutputStream(new File("D:\\爬虫测试\\douban" + start + ".txt")); 
-					  PrintStream p = new PrintStream(fs);
-					  p.println(page.getRawText().toString()); 
-					  p.close();*/
-					 
-					 parseUrlJson(page.getRawText(),douBanProcessor.getHttpClient());
+
+					/*
+					 * FileOutputStream fs = new FileOutputStream(new
+					 * File("D:\\爬虫测试\\douban" + start + ".txt")); PrintStream p
+					 * = new PrintStream(fs);
+					 * p.println(page.getRawText().toString()); p.close();
+					 */
+
+					parseUrlJson(page.getRawText(), douBanProcessor.getHttpClient());
 				} else {
 					douBanProcessor.getDouBanDownLoadThreadPooExecutor().execute(new DouBanDownTsak(start));
 				}
@@ -58,49 +60,52 @@ public class DouBanDownTsak implements Runnable {
 		}
 	}
 
-	/*public static void main(String[] args) {
-		try {
-			String url = "https://movie.douban.com/j/new_search_subjects?sort=T&range=0,10&tags=&start=0";
-			SimpleHttpClient httpClient = new SimpleHttpClient(
-					Site.me().setTimeOut(10000).setRetryTimes(3).setSleepTime(5000).setUserAgent(
-							"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.109 Safari/537.36"));
-			Page page = httpClient.get(url);
-			if (page.getRawText() != null && page.getStatusCode() == 200) {
-				parseUrlJson(page.getRawText(), httpClient);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}*/
+	/*
+	 * public static void main(String[] args) { try { String url =
+	 * "https://movie.douban.com/j/new_search_subjects?sort=T&range=0,10&tags=&start=0";
+	 * SimpleHttpClient httpClient = new SimpleHttpClient(
+	 * Site.me().setTimeOut(10000).setRetryTimes(3).setSleepTime(5000).
+	 * setUserAgent(
+	 * "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.109 Safari/537.36"
+	 * )); Page page = httpClient.get(url); if (page.getRawText() != null &&
+	 * page.getStatusCode() == 200) { parseUrlJson(page.getRawText(),
+	 * httpClient); } } catch (Exception e) { e.printStackTrace(); } }
+	 */
 
-	public  void parseUrlJson(String content, SimpleHttpClient httpClient) {
-		String baseJsonPath = "$.data.length()";
-		DocumentContext dc = JsonPath.parse(content);
-		Integer movieCount = dc.read(baseJsonPath);
-		for (int i = 0; i < movieCount; i++) {
-			String userBaseJsonPath = "$.data[" + i + "]";
-			String url = dc.read(userBaseJsonPath + ".url");
-			String doubanMovieId = dc.read(userBaseJsonPath + ".id");
-			parseMovieInfo(httpClient.get(url), url, doubanMovieId);
-			String commentUrl="https://movie.douban.com/subject/"+doubanMovieId+"/comments?sort=new_score&status=P";
-			parseMovieComment(httpClient.get(commentUrl),doubanMovieId);
+	public void parseUrlJson(String content, SimpleHttpClient httpClient) {
+		String proxyLine = ReadFromFile.RandomReadLine();
+		if (proxyLine != null) {
+			httpClient.setProxyProvider(SimpleProxyProvider
+					.from(new Proxy(proxyLine.split(":")[0], Integer.parseInt(proxyLine.split(":")[1]))));
+			String baseJsonPath = "$.data.length()";
+			DocumentContext dc = JsonPath.parse(content);
+			Integer movieCount = dc.read(baseJsonPath);
+			for (int i = 0; i < movieCount; i++) {
+				String userBaseJsonPath = "$.data[" + i + "]";
+				String url = dc.read(userBaseJsonPath + ".url");
+				String doubanMovieId = dc.read(userBaseJsonPath + ".id");
+				parseMovieInfo(httpClient.get(url), url, doubanMovieId);
+				String commentUrl = "https://movie.douban.com/subject/" + doubanMovieId
+						+ "/comments?sort=new_score&status=P";
+				parseMovieComment(httpClient.get(commentUrl), doubanMovieId);
+			}
 		}
 	}
 
-	private  void parseMovieComment(Page page, String doubanMovieId) {
+	private void parseMovieComment(Page page, String doubanMovieId) {
 		try {
-			String movieName=page.getHtml().xpath("//h1/text()").toString().split(" ")[0];
+			String movieName = page.getHtml().xpath("//h1/text()").toString().split(" ")[0];
 			Selectable selectable = page.getHtml().xpath("//div[@id='comments']");
-			List<Selectable> commentItemLs=selectable.xpath("//div[@class='comment-item']").nodes();
+			List<Selectable> commentItemLs = selectable.xpath("//div[@class='comment-item']").nodes();
 			for (Selectable commentItem : commentItemLs) {
-				Comments comments=new Comments();
+				Comments comments = new Comments();
 				comments.setDoubanMovieId(Integer.parseInt(doubanMovieId));
 				comments.setMovieName(movieName);
-				String commentAuthor=commentItem.xpath("//span[@class='comment-info']//a/text()").toString();
+				String commentAuthor = commentItem.xpath("//span[@class='comment-info']//a/text()").toString();
 				comments.setCommentAuthor(commentAuthor);
-				String commentInfo=commentItem.xpath("//p/text()").toString();
+				String commentInfo = commentItem.xpath("//p/text()").toString();
 				comments.setCommentInfo(commentInfo);
-				String commentVote= commentItem.xpath("//span[@class='votes']/text()").toString();
+				String commentVote = commentItem.xpath("//span[@class='votes']/text()").toString();
 				comments.setCommentVote(Integer.parseInt(commentVote));
 				commentsDaoImpl.insert(comments);
 			}
@@ -109,7 +114,7 @@ public class DouBanDownTsak implements Runnable {
 		}
 	}
 
-	public  void parseMovieInfo(Page page, String url, String doubanMovieId) {
+	public void parseMovieInfo(Page page, String url, String doubanMovieId) {
 		try {
 			MovieSubjects movieSubjects = new MovieSubjects();
 			movieSubjects.setDoubanMovieId(Integer.parseInt(doubanMovieId));
@@ -124,11 +129,13 @@ public class DouBanDownTsak implements Runnable {
 			movieSubjects.setType(listToString(type, '/'));
 			String runTime = selectable.$("span[property=v:runtime]", "text").toString();
 			movieSubjects.setRunTime(runTime);
-			
-			String language = selectable.regex(".语言:</span>.+\\s+<br>").toString().split("</span>")[1].split("<br>")[0].trim();
+
+			String language = selectable.regex(".语言:</span>.+\\s+<br>").toString().split("</span>")[1].split("<br>")[0]
+					.trim();
 			movieSubjects.setLanguage(language);
-			
-			String country = selectable.regex(".制片国家/地区:</span>.+[\\u4e00-\\u9fa5]+.+[\\u4e00-\\u9fa5]+\\s+<br>").toString().split("</span>")[1].split("<br>")[0].trim();
+
+			String country = selectable.regex(".制片国家/地区:</span>.+[\\u4e00-\\u9fa5]+.+[\\u4e00-\\u9fa5]+\\s+<br>")
+					.toString().split("</span>")[1].split("<br>")[0].trim();
 			movieSubjects.setCountry(country);
 
 			List<String> releaseData = selectable.$("span[property=v:initialReleaseDate]", "text").all();
